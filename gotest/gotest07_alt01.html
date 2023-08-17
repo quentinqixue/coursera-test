@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" onload="makeDraggable(evt)">
+      <style>
+        .background {
+          fill: #eee;
+        }
+        .static {
+          cursor: not-allowed;
+        }
+        .draggable {
+          cursor: move;
+        }
+      </style>
+
+        <script type="text/javascript"><![CDATA[
+          function makeDraggable(evt) {
+            var svg = evt.target;
+            svg.addEventListener('mousedown', startDrag);
+            svg.addEventListener('mousemove', drag);
+            svg.addEventListener('mouseup', endDrag);
+
+            function getMousePosition(evt) {
+              var CTM = svg.getScreenCTM();
+              return {
+                x: (evt.clientX - CTM.e) / CTM.a,
+                y: (evt.clientY - CTM.f) / CTM.d
+              };
+            }
+
+            var selectedElement, offset, selectedElementBorder;
+
+            function startDrag(evt) {
+              // alert('3925 - classList: ' + evt);
+              if (evt.target.classList.contains('draggable_border')) {
+                console.log("4134 " + evt.target);
+                selectedElementBorder = evt.target;
+                offset = getMousePosition(evt);
+                offset.x -= parseFloat(selectedElementBorder.getAttributeNS(null, "x"));
+                offset.y -= parseFloat(selectedElementBorder.getAttributeNS(null, "y"));
+              }
+            }
+
+            function drag(evt) {
+              // if (selectedElement) {
+              //   var coord = getMousePosition(evt);
+              //   selectedElement.setAttributeNS(null, "x", coord.x - offset.x);
+              //   selectedElement.setAttributeNS(null, "y", coord.y - offset.y);
+              // }
+              if (selectedElementBorder) {
+                var coord = getMousePosition(evt);
+                selectedElementBorder.setAttributeNS(null, "x", coord.x - offset.x);
+                selectedElementBorder.setAttributeNS(null, "y", coord.y - offset.y);
+                let x_1 = coord.x - offset.x;
+                let y_1 = coord.y - offset.y;
+                let x_2 = x_1 + 10;
+                let y_2 = y_1 + 10;
+                // <line x1="x_1" y1="y_1" x2="x_2" y2="y_2" style="fill-opacity: .0; stroke-width:0.02px; stroke:grey; stroke-dasharray: 0.1;" />
+              }
+
+            }
+
+            function endDrag(evt) {
+              if (selectedElementBorder) {
+                var coord = getMousePosition(evt);
+                selectedElementBorder.setAttributeNS(null, "x", coord.x - offset.x);
+                selectedElementBorder.setAttributeNS(null, "y", coord.y - offset.y);
+                // xxx=document.getElementById('abcd');
+                // xxx.setAttributeNS.setAttributeNS(null, "x", coord.x - offset.x);
+                // xxx.setAttributeNS.setAttributeNS(null, "y", coord.y - offset.y);
+              }
+              selectedElementBorder = null;
+            }
+          }
+        ]]> </script>
+
+      <rect x="0" y="0" width="30" height="20" class="background"/>
+      <g>
+      <rect class="draggable" x="4" y="5" width="8" height="10" fill="#007bff"/>
+      <rect id="abcd" class="draggable" x="14" y="15" width="8" height="10" fill="#7b00ff"/>
+      <rect class="draggable_border" x="14" y="15" width="8" height="10" style="fill-opacity: .0; stroke-width:0.02px; stroke:grey; stroke-dasharray: 0.1;"/>
+      </g>
+      <rect class="static" x="18" y="5" width="8" height="10" fill="#888"/>
+    </svg>
+
+  </body>
+</html>

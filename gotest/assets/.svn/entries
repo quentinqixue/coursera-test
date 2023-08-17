@@ -1,0 +1,196 @@
+10
+
+dir
+0
+svn+ssh://qsherman@10.65.1.6/usr02/svn/repos/www_chileoffshore.com/chileoffshore.com_20200514/en/qsnifistudy/assets
+svn+ssh://qsherman@10.65.1.6/usr02/svn/repos
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+773daaaf-2902-4823-b469-7c159da384fc
+
+jquery
+dir
+
+
+
+add
+
+jquery-form
+dir
+
+
+
+add
+
+d3-selection-multi
+dir
+
+
+
+add
+
+angular-route
+dir
+
+
+
+add
+
+angular-material
+dir
+
+
+
+add
+
+url-search-params
+dir
+
+
+
+add
+
+angular
+dir
+
+
+
+add
+
+jquery-ui-dist
+dir
+
+
+
+add
+
+jquery-minicolors
+dir
+
+
+
+add
+
+JSON2
+dir
+
+
+
+add
+
+angular-messages
+dir
+
+
+
+add
+
+qtip2
+dir
+
+
+
+add
+
+moment
+dir
+
+
+
+add
+
+lodash-core
+dir
+
+
+
+add
+
+jsonlint
+dir
+
+
+
+add
+
+angular-mocks
+dir
+
+
+
+add
+
+angular-aria
+dir
+
+
+
+add
+
+font-awesome
+dir
+
+
+
+add
+
+angular-animate
+dir
+
+
+
+add
+
+d3
+dir
+
+
+
+add
+
+reset.css
+dir
+
+
+
+add
+
+slickgrid
+dir
+
+
+
+add
+
+angular-sanitize
+dir
+
+
+
+add
+
+angular-resource
+dir
+
+
+
+add
+
