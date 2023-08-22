@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<!-- try to drag and move a group of svg element -->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript">
+      <!-- https://stackoverflow.com/questions/73154950/how-to-draw-lines-dynamically-on-svg-picture -->
+      const lines = [
+        {
+          from: { x: 0, y: 20 },
+          to: { x: 30, y: 60 }
+        },
+        {
+          from: { x: 0, y: 20 },
+          to: { x: 30, y: 60 }
+        }
+      ];
+
+      function addLine (x1, y1, x2, y2) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("stroke", "black");
+        line.setAttribute("style", "stroke-width:0.02px; stroke:grey; stroke-dasharray: 0.1;")
+
+
+        document.getElementById("mySvg").appendChild(line);
+      }
+
+      addEventListener("DOMContentLoaded", function () {
+        // alert("3220");
+        for (const line of lines) {
+          console.log("3428 - line: " + line.from.x + " / " + line.from.y + " / " + line.to.x + " / " + line.to.y);
+          addLine(line.from.x, line.from.y, line.to.x, line.to.y);
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <svg id="mySvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" onload="makeDraggable(evt)">
+      <style>
+        .background {
+          fill: #eee;
+        }
+        .static {
+          cursor: not-allowed;
+        }
+        .draggable {
+          cursor: move;
+        }
+      </style>
+
+        <script type="text/javascript"><![CDATA[
+          function makeDraggable(evt) {
+            var svg = evt.target;
+            svg.addEventListener('mousedown', startDrag);
+            svg.addEventListener('mousemove', drag);
+            svg.addEventListener('mouseup', endDrag);
+
+            function drawRect() {
+              if (selectedElement) {
+                var coord = getMousePosition(evt);
+                // selectedElement.setAttributeNS(null, "x", coord.x - offset.x);
+                // selectedElement.setAttributeNS(null, "y", coord.y - offset.y);
+                let width = selectedElement.getAttributeNS(null, "width");
+                let height = selectedElement.getAttributeNS(null, "height");
+                let x1 = coord.x - offset.x;
+                let x2 = x1 + width;
+                let y1 = coord.y - offset.y;
+                let y2 = y1 + height;
+                addLine(x1, y1, x2, y1);
+                addLine(x2, y2, x2, y2);
+              }
+            }
+
+            function getMousePosition(evt) {
+              var CTM = svg.getScreenCTM();
+              return {
+                x: (evt.clientX - CTM.e) / CTM.a,
+                y: (evt.clientY - CTM.f) / CTM.d
+              };
+            }
+
+            var selectedElement, offset, selectedElementBorder, shadowRectElement, shadowRect_x, shadowRect_y;
+            var dragList = [];
+
+            function startDrag(evt) {
+              // alert('3925 - classList: ' + evt);
+              console.log("9132 - id: " + evt.target.id);
+              shadowRectElement = document.getElementById("shadowRect");
+              console.log("9532 - classList: " + evt.target);
+              if (evt.target.classList.contains('draggable')) {
+                g2Element = document.getElementById("g2");
+                if (g2Element.hasChildNodes) {
+                  nodes = g2Element.childNodes;
+                  // for (itm in nodes) {
+                  //   console.log("9736 - item: " + itm);
+                  // }
+                  itmoffset = getMousePosition(evt);
+                  var maxWidth  = 0, shadowRect_x = 99999;
+                  var maxHeight = 0, shadowRect_y = 99999;
+                  cnt = 0;
+                  nodes.forEach((item, i) => {
+                    cnt++;
+                    // if (item.classList.contains("draggable")) {
+
+                      console.log("10539 i: " + i + " item: " + item + " / type: " + item.nodeType + " / name: " + item.nodeName);
+                      // let output = "Attributes of first item:\n";
+                      // for (const attr of item.attributes) {
+                      //   output += `${attr.name} -> ${attr.value}\n`;
+                      // }
+                      // console.log("11241 - output: " + output);
+                    // }
+                    if (item.nodeType == 1) {
+                      x = itmoffset.x - parseFloat(item.getAttributeNS(null, "x"));
+                      y = itmoffset.y - parseFloat(item.getAttributeNS(null, "y"));
+                      xx = parseFloat(item.getAttributeNS(null, "x"));
+                      yy = parseFloat(item.getAttributeNS(null, "y"));
+                      if (shadowRect_x > xx) {shadowRect_x = xx;}
+                      if (shadowRect_y > yy) {shadowRect_y = yy;}
+                      theWidth  = parseFloat(item.getAttributeNS(null, "width"));
+                      theHeight = parseFloat(item.getAttributeNS(null, "height"));
+                      if (maxWidth < theWidth){
+                        maxWidth = theWidth;
+                      }
+                      console.log("13041 - theHeight/maxHeight: " + theHeight + "/" + maxHeight);
+                      if (maxHeight < theHeight) {
+                        maxHeight = theHeight;
+                      }
+                      console.log("13441 - theHeight/maxHeight: " + theHeight + "/" + maxHeight);
+                      console.log("12341 - cnt:" + cnt + " theWidth: " + theWidth + "/" + maxWidth + " / height: " + theHeight + "/" + maxHeight);
+                      jsonObj = {"item": item, "offset_x": x, "offset_y": y};
+                      // dragList.push(item);
+                      dragList.push(jsonObj)
+                    }
+                  });
+
+                  dragList.forEach((itemJson, i) => {
+                      console.log("12637 - item: " + itemJson.item + " / offset_x: " + itemJson.offset_x + " / offset_y: " + itemJson.offset_y + " maxWidth: " + maxWidth);
+                  });
+
+                }
+                console.log("4134 " + evt.target);
+                selectedElement = evt.target;
+                if (shadowRectElement) {
+                  seWidth = parseFloat(selectedElement.getAttributeNS(null, "width"));
+                  seHeight  = parseFloat(selectedElement.getAttributeNS(null, "height"));
+                  console.log("9836 - width: " + seWidth + " height: " + seHeight + " / shadowRect_x: " + shadowRect_x + " / shadowRect_y: " + shadowRect_y + " / maxHeight: " + maxHeight);
+                  // shadowRectElement.setAttributeNS(null, "x", shadowRect_x);
+                  // shadowRectElement.setAttributeNS(null, "y", shadowRect_y);
+                  // shadowRectElement.setAttributeNS(null, "width", maxWidth);
+                  // shadowRectElement.setAttributeNS(null, "height", maxHeight);
+                }
+                shadowRectElement.setAttributeNS(null, "x", shadowRect_x);
+                shadowRectElement.setAttributeNS(null, "y", shadowRect_y);
+                shadowRectElement.setAttributeNS(null, "width", maxWidth);
+                shadowRectElement.setAttributeNS(null, "height", maxHeight);
+                // shadowRectElement.setAttributeNS(null, "width", maxWidth);
+                // shadowRectElement.setAttributeNS(null, "height", maxHeight);
+                offset = getMousePosition(evt);
+                // offset.x -= parseFloat(selectedElement.getAttributeNS(null, "x"));
+                // offset.y -= parseFloat(selectedElement.getAttributeNS(null, "y"));
+                offset.x -= parseFloat(shadowRectElement.getAttributeNS(null, "x"));
+                offset.y -= parseFloat(shadowRectElement.getAttributeNS(null, "y"));
+              }
+            }
+
+            function drag(evt) {
+              // if (selectedElement) {
+              //   alert("10229");
+                if (shadowRectElement) {
+                  // alert("10429");
+                  // offset = getMousePosition(evt);
+                  theId = "0";
+                  if (selectedElement) {
+                    thdId = selectedElement.getAttributeNS(null, "id");
+                    console.log("11739 - theId: " + theId + " / " + selectedElement);
+                  }
+                  var coord = getMousePosition(evt);
+                  // console.log("10833 coord.x: " + coord.x + "/" + offset.x + "/" + coord.y + "/" + offset.y + " id: " + theId);
+                  shadowRectElement.setAttributeNS(null, "x", coord.x - offset.x);
+                  shadowRectElement.setAttributeNS(null, "y", coord.y - offset.y);
+                }
+              // }
+              if (selectedElement) {
+                // var coord = getMousePosition(evt);
+                // selectedElement.setAttributeNS(null, "x", coord.x - offset.x);
+                // selectedElement.setAttributeNS(null, "y", coord.y - offset.y);
+                // let x_1 = coord.x - offset.x;
+                // let y_1 = coord.y - offset.y;
+                // let x_2 = selectedElement.getAttributeNS(null, "width")
+                // let y_2 = y_1 + 10;
+                // <line x1="x_1" y1="y_1" x2="x_2" y2="y_2" style="fill-opacity: .0; stroke-width:0.02px; stroke:grey; stroke-dasharray: 0.1;" />
+                // drawRect()
+              }
+              // dragList.forEach((item, i) => {
+              //   console.log("16335 - item.nodeType: " + item.nodeType + " / " + item);
+              //   if (item.nodeType == 1) {
+              //     console.log("16435 - item: " + item + " / " + item.getAttributeNS(null, "x"));
+              //     item.setAttributeNS(null, "x", coord.x - offset.x);
+              //     item.setAttributeNS(null, "y", coord.y - offset.y);
+              //   } else {
+              //     console.log("16735 - item.nodeType: " + item.nodeType);
+              //   }
+              // });
+
+            }
+
+            function endDrag(evt) {
+              dragList.forEach((itemJson, i) => {
+                var coord = getMousePosition(evt);
+                item = itemJson.item;
+                console.log("19035 - item: " + itemJson.item + " / offset_x: " + itemJson.offset_x + " / coord.x: " + coord.x + " / offset_y: " + itemJson.offset_y);
+                item.setAttributeNS(null, "x", coord.x - itemJson.offset_x);
+                item.setAttributeNS(null, "y", coord.y - itemJson.offset_y);
+              });
+
+              // if (selectedElement) {
+              //   var coord = getMousePosition(evt);
+              //   selectedElement.setAttributeNS(null, "x", coord.x - offset.x);
+              //   selectedElement.setAttributeNS(null, "y", coord.y - offset.y);
+              //   // shadowRectElement=document.getElementById('shadowRect');
+              //   // shadowRectElement.setAttributeNS.setAttributeNS(null, "x", coord.x - offset.x);
+              //   // shadowRectElement.setAttributeNS.setAttributeNS(null, "y", coord.y - offset.y);
+              // }
+              selectedElementBorder = null;
+              shadowRectElement = null;
+              dragList = [];
+            }
+          }
+        ]]> </script>
+
+      <rect x="0" y="0" width="30" height="20" class="background"/>
+      <g>
+        <rect id="shadowRect" class="draggable_border" x="0" y="0" width="0" height="0" style="fill-opacity: .0; stroke-width:0.02px; stroke:grey; stroke-dasharray: 0.1;"/>
+        <rect id="1" class="draggable" x="4" y="5" width="8" height="10" fill="#007bff"/>
+        <g id="g2">
+          <rect id="2" class="draggable" x="14" y="15" width="8" height="10" fill="#7b00ff"/>
+          <rect id="g2" class="draggable" x="15" y="16" width="6" height="8" fill="#7b0000"/>
+          <rect id="g2" class="draggable" x="16" y="17" width="4" height="6" fill="#007b00"/>
+        </g>
+      </g>
+      <rect class="static" x="18" y="5" width="8" height="10" fill="#888"/>
+    </svg>
+  </body>
+</html>
